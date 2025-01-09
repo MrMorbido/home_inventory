@@ -19,7 +19,7 @@
     <button onclick="startScanner()">Start Barcode Scanner</button>
     <button onclick="stopScanner()">Close Barcode Scanner</button>
     <div id="scanner" style="position: relative; width: 100%; height: 300px; border: 2px solid black;">
-        <div id="roi" style="position: absolute; border: 2px dashed red; top: 50%; left: 50%; width: 60%; height: 40%; transform: translate(-50%, -50%);"></div>
+        <div id="roi" style="position: absolute; border: 2px dashed red; top: 40%; left: 50%; width: 50%; height: 30%; transform: translate(-50%, -50%);"></div>
     </div>
 
     <ul id="itemList"></ul>
@@ -55,11 +55,16 @@
                 inputStream: {
                     name: "Live",
                     type: "LiveStream",
-                    target: document.querySelector('#scanner')
+                    target: document.querySelector('#scanner'),
+                    constraints: {
+                        facingMode: "environment"
+                    }
                 },
                 decoder: {
-                    readers: ["ean_reader"]
-                }
+                    readers: ["ean_reader"],
+                },
+                locate: true,
+                frequency: 10
             }, function(err) {
                 if (err) {
                     console.log(err);
@@ -69,10 +74,11 @@
             });
 
             Quagga.onDetected(function(result) {
+                console.log('Barcode detected:', result.codeResult.code);
                 if (confirm(`Barcode Detected: ${result.codeResult.code}\nIs this the correct item?`)) {
                     document.getElementById('itemName').value = result.codeResult.code;
+                    Quagga.stop();
                 }
-                Quagga.stop();
             });
         }
 
