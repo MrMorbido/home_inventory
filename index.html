@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fridge Inventory</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Fridge & Kitchen Inventory</h1>
+    <form id="itemForm">
+        <input type="text" id="itemName" placeholder="Item Name" required>
+        <input type="number" id="itemQuantity" placeholder="Quantity" required>
+        <button type="submit">Add Item</button>
+    </form>
+
+    <ul id="itemList"></ul>
+
+    <script>
+        const itemForm = document.getElementById('itemForm');
+        const itemList = document.getElementById('itemList');
+
+        itemForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const itemName = document.getElementById('itemName').value;
+            const itemQuantity = document.getElementById('itemQuantity').value;
+
+            if (itemName && itemQuantity) {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${itemName} - ${itemQuantity}`;
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = function() {
+                    listItem.remove();
+                };
+
+                listItem.appendChild(deleteButton);
+                itemList.appendChild(listItem);
+
+                itemForm.reset();
+            }
+        });
+    </script>
+</body>
+</html>
