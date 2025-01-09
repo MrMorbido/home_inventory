@@ -18,9 +18,7 @@
     <h2>Scan a Barcode</h2>
     <button onclick="startScanner()">Start Barcode Scanner</button>
     <button onclick="stopScanner()">Close Barcode Scanner</button>
-    <div id="scanner" style="position: relative; width: 100%; height: 300px; border: 2px solid black;">
-        <div id="roi" style="position: absolute; border: 2px dashed red; top: 40%; left: 50%; width: 50%; height: 30%; transform: translate(-50%, -50%);"></div>
-    </div>
+    <div id="scanner" style="position: relative; width: 100%; height: 300px; border: 2px solid black;"></div>
 
     <ul id="itemList"></ul>
 
@@ -72,6 +70,22 @@
                     return;
                 }
                 Quagga.start();
+            });
+
+            Quagga.onProcessed(function(result) {
+                if (result) {
+                    const drawingCtx = Quagga.canvas.ctx.overlay;
+                    const drawingCanvas = Quagga.canvas.dom.overlay;
+                    drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+
+                    if (result.boxes) {
+                        result.boxes.forEach(function(box) {
+                            drawingCtx.strokeStyle = "green";
+                            drawingCtx.lineWidth = 2;
+                            drawingCtx.strokeRect(box[0][0], box[0][1], box[1][0] - box[0][0], box[3][1] - box[0][1]);
+                        });
+                    }
+                }
             });
 
             Quagga.onDetected(function(result) {
