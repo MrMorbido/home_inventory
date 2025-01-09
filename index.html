@@ -58,7 +58,8 @@
                     target: document.querySelector('#scanner'),
                     constraints: {
                         facingMode: "environment"
-                    }
+                    },
+                    willReadFrequently: true
                 },
                 decoder: {
                     readers: ["ean_reader"],
