@@ -63,7 +63,7 @@
                 decoder: {
                     readers: ["ean_reader"],
                 },
-                locate: false,  
+                locate: true,  
                 frequency: 10
             }, function(err) {
                 if (err) {
@@ -71,6 +71,20 @@
                     return;
                 }
                 Quagga.start();
+            });
+
+            Quagga.onProcessed(function(result) {
+                const drawingCtx = Quagga.canvas.ctx.overlay;
+                const drawingCanvas = Quagga.canvas.dom.overlay;
+                drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+
+                if (result && result.boxes) {
+                    result.boxes.forEach(function(box) {
+                        drawingCtx.strokeStyle = "green";
+                        drawingCtx.lineWidth = 2;
+                        drawingCtx.strokeRect(box[0][0], box[0][1], box[1][0] - box[0][0], box[3][1] - box[0][1]);
+                    });
+                }
             });
 
             Quagga.onDetected(function(result) {
