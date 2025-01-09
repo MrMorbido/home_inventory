@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Inventory App</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+</head>
+<body>
+    <h1>Home Inventory App</h1>
+    <form id="itemForm">
+        <input type="text" id="itemName" placeholder="Item Name" required>
+        <input type="number" id="itemQuantity" placeholder="Quantity" required>
+        <button type="submit">Add Item</button>
+    </form>
+
+    <h2>Scan a Barcode</h2>
+    <button onclick="startScanner()">Start Barcode Scanner</button>
+    <div id="scanner"></div>
+
+    <ul id="itemList"></ul>
+
+    <script>
+        const itemForm = document.getElementById('itemForm');
+        const itemList = document.getElementById('itemList');
+
+        itemForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const itemName = document.getElementById('itemName').value;
+            const itemQuantity = document.getElementById('itemQuantity').value;
+
+            if (itemName && itemQuantity) {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${itemName} - ${itemQuantity}`;
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = function() {
+                    listItem.remove();
+                };
+
+                listItem.appendChild(deleteButton);
+                itemList.appendChild(listItem);
+
+                itemForm.reset();
+            }
+        });
+
+        function startScanner() {
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector('#scanner')
+                },
+                decoder: {
+                    readers: ["ean_reader"]
+                }
+            }, function(err) {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                Quagga.start();
+            });
+
+            Quagga.onDetected(function(result) {
+                alert('Barcode Detected: ' + result.codeResult.code);
+                document.getElementById('itemName').value = result.codeResult.code;
+                Quagga.stop();
+            });
+        }
+    </script>
+</body>
+</html>
